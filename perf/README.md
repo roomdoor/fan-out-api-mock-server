@@ -8,13 +8,15 @@ Load environment variables before starting the mock server:
 
 ```bash
 # For baseline tests (deterministic, fast responses)
-source /Users/sihwa/IdeaProjects/loan-limit-mock-server/perf/baseline.env
+source "${MOCK_SERVER_DIR}/perf/baseline.env"
 ./gradlew run
 
 # For stress tests (variable latency, some failures)
-source /Users/sihwa/IdeaProjects/loan-limit-mock-server/perf/stress.env
+source "${MOCK_SERVER_DIR}/perf/stress.env"
 ./gradlew run
 ```
+
+`MOCK_SERVER_DIR` should point to this repository's root. Alternatively, run the commands from within the repo and replace `${MOCK_SERVER_DIR}` with `.`.
 
 ## Profiles
 
@@ -51,6 +53,6 @@ When running 10 shards (ports 18000-18009):
 
 ```bash
 # Start fleet with baseline profile
-export $(cat /Users/sihwa/IdeaProjects/loan-limit-mock-server/perf/baseline.env | xargs)
+export $(cat "${MOCK_SERVER_DIR}/perf/baseline.env" | xargs)
 # Then run docker-compose up
 ```
