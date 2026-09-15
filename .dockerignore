@@ -1,0 +1,4 @@
+# Dockerfile이 쓰는 건 installDist 산출물 하나뿐이다.
+# 나머지(.git, .gradle, build/classes, perf, src 등)를 빌드 컨텍스트에서 제외한다.
+*
+!build/install/loan-limit-mock-server
