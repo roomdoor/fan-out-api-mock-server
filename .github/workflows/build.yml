@@ -11,6 +11,12 @@ permissions:
   contents: read
   packages: write
 
+# main에 연속으로 푸시되면 두 런이 겹치고, 늦게 끝난 쪽이 latest를 가져간다.
+# 순서가 뒤집히면 latest가 더 오래된 커밋을 가리킬 수 있어 앞선 런을 취소한다.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -27,13 +33,10 @@ jobs:
       - name: Set up Gradle
         uses: gradle/actions/setup-gradle@v4
 
-      - name: Verify
-        run: ./gradlew check
-
-      # Dockerfile이 build/install/loan-limit-mock-server/ 를 COPY 하므로
-      # 이미지 빌드 전에 installDist 산출물이 있어야 한다.
-      - name: Install dist
-        run: ./gradlew installDist
+      # installDist는 Dockerfile이 COPY 하는 build/install/loan-limit-mock-server/
+      # 산출물을 만든다. 이게 없으면 이미지 빌드가 깨진다.
+      - name: Verify and install dist
+        run: ./gradlew check installDist
 
       # PR에서는 이미지를 밀지 않는다. 빌드가 되는지만 확인한다.
       - name: Log in to GHCR
